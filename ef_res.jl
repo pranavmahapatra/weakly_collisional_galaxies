@@ -32,10 +32,10 @@ default(
 )
 
 # ==========================================
-# Step 1: Parameters
+# Parameters
 # ==========================================
 
-Precision = 34
+Precision = 34 #just informational (Float64 used)
 
 alpha = 0.95
 mu    = 5e-6
@@ -76,7 +76,7 @@ G = solve_G(G0)
 @printf("G_Landau = %.15g\n", G)
 
 # ==========================================
-# Step 2: Matrix S
+# Matrix S
 # ==========================================
 
 rows = Int[]
@@ -97,7 +97,7 @@ for i in 1:n
 end
 
 # ==========================================
-# Step 3: Eigenvalue
+# Eigenvalue
 # ==========================================
 
 sigma = G - 0.01093*mu
@@ -110,7 +110,7 @@ U = U[:,1]
 @printf("D_ev_im  = %.15g\n", imag(D_eig))
 
 # ==========================================
-# Step 4: Eigenvector plot
+# Eigenvector plot
 # ==========================================
 
 i = 1:n
@@ -132,7 +132,7 @@ ylabel!(L"A_n")
 savefig(p_eig, "eigenvector.pdf")
 
 # ==========================================
-# Step 5: Compute H
+# Compute H
 # ==========================================
 
 delta = (mu/2)^(1/3)
@@ -180,7 +180,7 @@ end
 cf = -alpha/sqrt(pi) .* xx ./ (xx .+ 1im*G)
 
 # ==========================================
-# Step 6: Plot H
+# Plot H
 # ==========================================
 
 p_H = plot(xx, real.(H),
@@ -201,7 +201,7 @@ xlabel!(L"u")
 savefig(p_H, "H_compare.pdf")
 
 # ==========================================
-# Step 7: Reconstruct eigenfunction
+# Reconstruct eigenfunction
 # ==========================================
 
 x = 10 .^ range(-6,1,length=10001)
@@ -234,7 +234,7 @@ cf_x = -alpha/sqrt(pi) .* x .* exp.(-x.^2) ./ (x .+ 1im*G)
 EF = -Her_x
 
 # ==========================================
-# Step 8: Final plot
+# Final plot
 # ==========================================
 
 p_final = plot(x, real.(EF),
