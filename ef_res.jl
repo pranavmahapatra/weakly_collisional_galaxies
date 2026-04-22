@@ -81,11 +81,11 @@ G = solve_G(G0)
 
 rows = Int[]
 cols = Int[]
-vals = Float64[]
+vals = ComplexF64[]   # FIXED
 
 for j in 1:n-1
-    push!(rows,j); push!(cols,j+1); push!(vals,sqrt(j))
-    push!(rows,j+1); push!(cols,j); push!(vals,-sqrt(j))
+    push!(rows,j); push!(cols,j+1); push!(vals,sqrt(j) + 0im)   # FIXED
+    push!(rows,j+1); push!(cols,j); push!(vals,-sqrt(j) + 0im)  # FIXED
 end
 
 S = sparse(rows,cols,vals,n,n)
@@ -100,7 +100,8 @@ end
 # Eigenvalue
 # ==========================================
 
-sigma = G - 0.01093*mu
+#sigma = Complex(G, -0.05)   # FIXED
+sigma = Complex(G, -0.01093 * mu)
 λ, U = eigs(S; nev=1, sigma=sigma, tol=1e-12, maxiter=10^6)
 
 D_eig = λ[1]
@@ -115,7 +116,7 @@ U = U[:,1]
 
 i = 1:n
 
-p_eig = plot(i, real.(U),
+p_eig = plot(i, abs.(real.(U)),   # FIXED
     xscale=:log10, yscale=:log10,
     color=sea_green, lw=2.5, label="Re V")
 
@@ -136,7 +137,7 @@ savefig(p_eig, "eigenvector.pdf")
 # ==========================================
 
 delta = (mu/2)^(1/3)
-Gamma = G/delta
+Gamma = abs(G)/delta   # FIXED
 
 q = range(0,2.5*sqrt(Gamma),length=200001)
 dq = q[2]-q[1]
@@ -165,17 +166,10 @@ Uvals = xx/delta
 
 H = zeros(ComplexF64,length(Uvals))
 
-for k in eachindex(Uvals)
-    H[k] = sum(exp.(-1im*q.*Uvals[k]) .* eSq)
-end
-
 @threads for k in eachindex(Uvals)
     tmp = exp.(-1im .* q .* Uvals[k])
     H[k] = dot(tmp, eSq)
 end
-
-#H .= 1 .+ H
-#H .= -alpha/sqrt(pi) .* H
 
 cf = -alpha/sqrt(pi) .* xx ./ (xx .+ 1im*G)
 
@@ -237,7 +231,7 @@ EF = -Her_x
 # Final plot
 # ==========================================
 
-p_final = plot(x, real.(EF),
+p_final = plot(x, abs.(real.(EF)),   # FIXED
     xscale=:log10, yscale=:log10,
     color=sea_green, lw=2.5, label="Re EF")
 
@@ -268,7 +262,6 @@ ImEF = symlog(imag.(EF))
 ReCF = symlog(real.(cf_x))
 ImCF = symlog(imag.(cf_x))
 
-# Colors for symlog plot
 num_real = "#683659"
 num_imag = "#625185"
 
